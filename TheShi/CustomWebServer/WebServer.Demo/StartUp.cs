@@ -41,67 +41,10 @@ namespace WebServer.demo
                     .MapGet("/Login", new HtmlResponse(LoginPage.LoginForm))
                     .MapPost("/Login", new HtmlResponse("", PerformLogin))
                     .MapGet("/Logout", new HtmlResponse("", PerformLogout))
-                    .MapGet("/UserProfile", new HtmlResponse("", ShowProfile))
-                    .MapGet("/Chat/Show", new HtmlResponse("", ShowChat))
-                    .MapPost("/Chat/Send", new RedirectResponse("/Chat/Show", SendChatMessage));
+                    .MapGet("/UserProfile", new HtmlResponse("", ShowProfile));
             });
 
             await webServer.Start();
-        }
-
-        private static readonly List<KeyValuePair<string, string>> ChatMessages = new();
-
-        private static void ShowChat(Request req, Response res)
-        {
-            var sb = new StringBuilder();
-            sb.Append("<h3>Messages:</h3>");
-            if (ChatMessages.Any())
-            {
-                foreach (var message in ChatMessages)
-                {
-                    sb.Append($@"<div class='card .bg-light col-6'>
-                        <div class='card-body'>
-                            <blockquote class='blockquote mb-0'>
-                                <p>{message.Value}</p>
-                                <footer class='blockquote-footer'>{message.Key}</footer>
-                            </blockquote>
-                        </div>
-                    </div>");
-                }
-            }
-            else
-            {
-                sb.Append("<p>No messages yet!</p>");
-            }
-
-            sb.Append(@"<p></p>
-            <form action='/Chat/Send' method='post'>
-                <div class='form-group card-header row'>
-                    <div class='col-12'>
-                        <h5>Send a new message</h5>
-                    </div>
-                    <div class='col-8'>
-                        <label>Message: </label>
-                        <textarea name='Message' class='form-control' rows='3'></textarea>
-                    </div>
-                    <div class='col-4'>
-                        <label>Sender Name: </label>
-                        <input name='Sender' class='form-control'>
-                        <input class='btn btn-primary mt-2 float-lg-right' type='submit' value='Send' />
-                    </div>
-                </div>
-            </form>");
-            res.Body = sb.ToString();
-        }
-
-        private static void SendChatMessage(Request req, Response res)
-        {
-            if (req.FromData.ContainsKey("Sender") && req.FromData.ContainsKey("Message"))
-            {
-                var sender = req.FromData["Sender"];
-                var message = req.FromData["Message"];
-                ChatMessages.Add(new KeyValuePair<string, string>(sender, message));
-            }
         }
 
         private static void ShowNumbersTo50(Request req, Response res)

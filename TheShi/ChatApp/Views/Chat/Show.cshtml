@@ -1,0 +1,41 @@
+@using ChatApp.Models
+@model ChatViewModel
+@{
+    ViewData["Title"] = "General Chat";
+
+    string GetUserColor(string name)
+    {
+        var colors = new[] { "#5865F2", "#3BA55D", "#ED4245", "#FEE75C", "#EB459E", "#9B59B6" };
+        int hash = Math.Abs(name.GetHashCode());
+        return colors[hash % colors.Length];
+    }
+}
+
+@if (Model.Messages != null && Model.Messages.Any())
+{
+    @foreach (var message in Model.Messages)
+    {
+        <div class="message">
+            <div class="avatar" style="background-color: @GetUserColor(message.Sender)">
+                @message.Sender[0].ToString().ToUpper()
+            </div>
+            <div class="message-content">
+                <div>
+                    <span class="user-name">@message.Sender</span>
+                    <span class="timestamp">Today at @DateTime.Now.ToString("h:mm tt")</span>
+                </div>
+                <div class="text">@message.MessageText</div>
+            </div>
+        </div>
+    }
+}
+
+<div class="input-wrapper">
+    <form asp-controller="Chat" asp-action="Send" method="post">
+        <div class="input-bar">
+            <input asp-for="CurrentMessage.Sender" class="sender-input" placeholder="Your Name" required>
+            <input asp-for="CurrentMessage.MessageText" placeholder="Message #general" required autocomplete="off">
+            <button type="submit" style="display:none"></button>
+        </div>
+    </form>
+</div>
